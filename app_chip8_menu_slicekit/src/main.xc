@@ -6,13 +6,16 @@
 #include "chip8_screen.h"
 #include "chip8_keys.h"
 #include "chip8_ps2_keyboard.h"
+#include "chip8_image_bundle.h"
 #include "lcd.h"
 #include "syscall.h"
 #include "ps2.h"
 #include "ps2_keyboard.h"
 #include "chip8_menu.h"
+#include "chip8_image_bundle.h"
 #include "text_display.h"
 #include "text_display_font.h"
+#include "xassert.h"
 
 lcd_ports ports = {
   XS1_PORT_1G, /* clk */
@@ -49,8 +52,7 @@ void chip8_callbacks_server(server interface chip8_callbacks callbacks,
   }
 }
 
-#define MAX_ENTRIES 100
-#define MAX_STRING_TABLE_SIZE 2000
+#define IMAGES_BUFFER_SIZE 4000
 
 void
 chip8_with_menu(client interface chip8_image_reader image_reader,
@@ -62,20 +64,25 @@ chip8_with_menu(client interface chip8_image_reader image_reader,
     chip8_image_bundle_entry_t selected_image;
     {
       interface text_display display;
-      chip8_image_bundle_entry_t entries[MAX_ENTRIES];
-      char strings[MAX_STRING_TABLE_SIZE];
-      int n = image_reader.get_entries(entries, MAX_ENTRIES, strings,
-                                       MAX_STRING_TABLE_SIZE);
+      chip8_image_bundle_entry_list_t entry_list;
+      char buffer[IMAGES_BUFFER_SIZE];
+      char * movable buffer_ptr = buffer;
+      if (image_reader.get_entries(&entry_list, move(buffer_ptr),
+                                   IMAGES_BUFFER_SIZE) < 0) {
+        fail("failed to read images");
+      }
       int selected;
       par {
         {
-          selected = chip8_menu(entries, n, strings, display, keys);
+          selected =
+           chip8_menu(entry_list, display, keys);
           display.shutdown();
         }
         text_display_server(display, to_lcd, from_lcd,
                             text_display_default_font);
       }
-      selected_image = entries[selected];
+      selected_image = entry_list.entries[selected];
+      buffer_ptr = chip8_image_reader_recycle_entry_list(entry_list);
     }
     {
       interface chip8_screen screen;
