@@ -36,7 +36,7 @@ def write_image_bundle(images, filename):
 
   f = io.open(filename, 'wb')
   header_size = 3 * 4
-  entry_size = 3 * 4
+  entry_size = 4 + 2 + 2
   # Write header / entry placeholders
   for _ in range(header_size + len(images) * entry_size):
     f.write('\0')
@@ -71,10 +71,10 @@ def write_image_bundle(images, filename):
                       data_size))
   # Fill in entries
   for entry in entries:
-    f.write(struct.pack('<III',
-                        entry.string,
+    f.write(struct.pack('<IHH',
                         entry.data,
-                        entry.size))
+                        entry.size,
+                        entry.string))
   f.close()
 
 

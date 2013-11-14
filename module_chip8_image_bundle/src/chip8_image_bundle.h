@@ -4,9 +4,9 @@
 #include <stdint.h>
 
 typedef struct chip8_image_bundle_entry_t {
-  uint32_t name_offset;
   uint32_t data_offset;
-  uint32_t data_size;
+  uint16_t data_size;
+  uint16_t name_offset;
 } chip8_image_bundle_entry_t;
 
 typedef struct chip8_image_bundle_entry_list_t {
