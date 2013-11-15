@@ -6,7 +6,7 @@ TARGET = STARTKIT
 # The APP_NAME variable determines the name of the final .xe file. It should
 # not include the .xe postfix. If left blank the name will default to
 # the project name
-APP_NAME = app_chip8_startkit
+APP_NAME = app_chip8_menu_startkit
 
 # The USED_MODULES variable lists other module used by the application.
 USED_MODULES = module_buffers module_chip8 module_chip8_gamecube_controller module_chip8_image_bundle module_chip8_menu module_gamecube_controller module_lcd module_logging module_text_display module_xassert
@@ -16,7 +16,7 @@ USED_MODULES = module_buffers module_chip8 module_chip8_gamecube_controller modu
 # XCC_XC_FLAGS, XCC_C_FLAGS, XCC_ASM_FLAGS, XCC_CPP_FLAGS
 # If the variable XCC_MAP_FLAGS is set it overrides the flags passed to
 # xcc for the final link (mapping) stage.
-XCC_FLAGS = -O2 -g -fxscope
+XCC_FLAGS = -O2 -g
 
 # The VERBOSE variable, if set to 1, enables verbose output from the make system.
 VERBOSE = 0
